@@ -1,3 +1,6 @@
+# chcp 65001
+# python app.py --transport webrtc --model wav2lip --avatar_id wav2lip256_avatar1
+
 ###############################################################################
 #  Copyright (C) 2024 LiveTalking@lipku https://github.com/lipku/LiveTalking
 #  email: lipku@foxmail.com
@@ -28,7 +31,7 @@ import numpy as np
 from threading import Thread,Event
 #import multiprocessing
 import torch.multiprocessing as mp
-
+app.py
 from aiohttp import web
 import aiohttp
 import aiohttp_cors
@@ -45,7 +48,6 @@ import asyncio
 import torch
 from typing import Dict
 from logger import logger
-
 
 app = Flask(__name__)
 #sockets = Sockets(app)
@@ -378,8 +380,8 @@ if __name__ == '__main__':
 
     parser.add_argument('--customvideo_config', type=str, default='')
 
-    parser.add_argument('--tts', type=str, default='edgetts') #xtts gpt-sovits cosyvoice
-    parser.add_argument('--REF_FILE', type=str, default=None)
+    parser.add_argument('--tts', type=str, default='xtts') #xtts gpt-sovits cosyvoice
+    parser.add_argument('--REF_FILE', type=str, default='reference.wav')
     parser.add_argument('--REF_TEXT', type=str, default=None)
     parser.add_argument('--TTS_SERVER', type=str, default='http://127.0.0.1:9880') # http://localhost:9000
     # parser.add_argument('--CHARACTER', type=str, default='test')

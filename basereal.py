@@ -2,17 +2,7 @@
 #  Copyright (C) 2024 LiveTalking@lipku https://github.com/lipku/LiveTalking
 #  email: lipku@foxmail.com
 # 
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#  
-#       http://www.apache.org/licenses/LICENSE-2.0
-# 
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
+#  Apache License 2.0 하에 소스코드 공개
 ###############################################################################
 
 import math
@@ -30,120 +20,147 @@ import queue
 from queue import Queue
 from threading import Thread, Event
 from io import BytesIO
-import soundfile as sf
+import soundfile as sf  # 오디오 파일 읽기 및 저장
 
-import av
+import av  # FFmpeg을 Python에서 다루기 위한 라이브러리
 from fractions import Fraction
 
-from ttsreal import EdgeTTS,SovitsTTS,XTTS,CosyVoiceTTS,FishTTS,TencentTTS
+# 다양한 TTS 엔진들 불러오기
+from ttsreal import EdgeTTS, SovitsTTS, XTTS, CosyVoiceTTS, FishTTS, TencentTTS, LocalTTS
 from logger import logger
 
-from tqdm import tqdm
+from tqdm import tqdm  # 프로그레스 바 출력용
+
+# 이미지 리스트를 받아서 numpy 배열 형태로 로딩하는 함수
 def read_imgs(img_list):
     frames = []
     logger.info('reading images...')
-    for img_path in tqdm(img_list):
+    for img_path in tqdm(img_list):  # 이미지 로딩 과정을 시각적으로 표시
         frame = cv2.imread(img_path)
         frames.append(frame)
     return frames
 
+# LiveTalking의 실시간 TTS/ASR 시스템의 기본 클래스
 class BaseReal:
     def __init__(self, opt):
         self.opt = opt
-        self.sample_rate = 16000
-        self.chunk = self.sample_rate // opt.fps # 320 samples per chunk (20ms * 16000 / 1000)
-        self.sessionid = self.opt.sessionid
+        self.sample_rate = 16000  # 오디오 샘플링 레이트
+        self.chunk = self.sample_rate // opt.fps  # 프레임 단위 오디오 청크 크기 (예: 20ms = 320샘플)
+        self.sessionid = self.opt.sessionid  # 현재 세션 식별자
 
+        # 선택된 TTS 엔진에 따라 객체 초기화
         if opt.tts == "edgetts":
-            self.tts = EdgeTTS(opt,self)
+            self.tts = EdgeTTS(opt, self)
         elif opt.tts == "gpt-sovits":
-            self.tts = SovitsTTS(opt,self)
+            self.tts = SovitsTTS(opt, self)
         elif opt.tts == "xtts":
-            self.tts = XTTS(opt,self)
+            self.tts = XTTS(opt, self)
         elif opt.tts == "cosyvoice":
-            self.tts = CosyVoiceTTS(opt,self)
+            self.tts = CosyVoiceTTS(opt, self)
         elif opt.tts == "fishtts":
-            self.tts = FishTTS(opt,self)
+            self.tts = FishTTS(opt, self)
         elif opt.tts == "tencent":
-            self.tts = TencentTTS(opt,self)
-        
-        self.speaking = False
+            self.tts = TencentTTS(opt, self)
+        elif opt.tts == "local":
+            self.tts = LocalTTS(opt, self)
 
-        self.recording = False
-        self._record_video_pipe = None
-        self._record_audio_pipe = None
-        self.width = self.height = 0
+        self.speaking = False  # 현재 TTS가 말하고 있는지 여부
 
-        self.curr_state=0
-        self.custom_img_cycle = {}
-        self.custom_audio_cycle = {}
-        self.custom_audio_index = {}
-        self.custom_index = {}
-        self.custom_opt = {}
-        self.__loadcustom()
+        self.recording = False  # 영상/음성 녹음 여부
+        self._record_video_pipe = None  # 영상 파이프 핸들러
+        self._record_audio_pipe = None  # 오디오 파이프 핸들러
+        self.width = self.height = 0  # 영상 해상도 정보
 
-    def put_msg_txt(self,msg,eventpoint=None):
-        self.tts.put_msg_txt(msg,eventpoint)
-    
-    def put_audio_frame(self,audio_chunk,eventpoint=None): #16khz 20ms pcm
-        self.asr.put_audio_frame(audio_chunk,eventpoint)
+        self.curr_state = 0  # 사용자 정의 음성 상태 (0: 없음)
+        self.custom_img_cycle = {}    # 사용자 정의 이미지 리스트
+        self.custom_audio_cycle = {}  # 사용자 정의 오디오 배열
+        self.custom_audio_index = {}  # 사용자 정의 오디오 위치 인덱스
+        self.custom_index = {}        # 사용자 정의 이미지 위치 인덱스
+        self.custom_opt = {}          # 사용자 정의 설정 저장
 
-    def put_audio_file(self,filebyte): 
+        self.__loadcustom()  # 사용자 정의 리소스 로드
+
+    # 텍스트 메시지를 TTS 모듈에 전달
+    def put_msg_txt(self, msg, eventpoint=None):
+        self.tts.put_msg_txt(msg, eventpoint)
+
+    # 오디오 프레임 (16kHz, 20ms 단위 PCM) 을 ASR 모듈로 전달
+    def put_audio_frame(self, audio_chunk, eventpoint=None):
+        self.asr.put_audio_frame(audio_chunk, eventpoint)
+
+    # 오디오 파일 전체 (bytes)를 받아 청크 단위로 나누어 ASR에 입력
+    def put_audio_file(self, filebyte): 
         input_stream = BytesIO(filebyte)
         stream = self.__create_bytes_stream(input_stream)
         streamlen = stream.shape[0]
-        idx=0
-        while streamlen >= self.chunk:  #and self.state==State.RUNNING
+        idx = 0
+        while streamlen >= self.chunk:
             self.put_audio_frame(stream[idx:idx+self.chunk])
             streamlen -= self.chunk
             idx += self.chunk
-    
-    def __create_bytes_stream(self,byte_stream):
-        #byte_stream=BytesIO(buffer)
-        stream, sample_rate = sf.read(byte_stream) # [T*sample_rate,] float64
-        logger.info(f'[INFO]put audio stream {sample_rate}: {stream.shape}')
-        stream = stream.astype(np.float32)
 
-        if stream.ndim > 1:
+    # BytesIO 기반 스트림을 numpy 배열로 변환하고 샘플링 레이트를 일치시킴
+    def __create_bytes_stream(self, byte_stream):
+        stream, sample_rate = sf.read(byte_stream)  # 오디오 로딩 (float64)
+        logger.info(f'[INFO]put audio stream {sample_rate}: {stream.shape}')
+        stream = stream.astype(np.float32)  # float32로 변환
+
+        if stream.ndim > 1:  # 스테레오인 경우
             logger.info(f'[WARN] audio has {stream.shape[1]} channels, only use the first.')
-            stream = stream[:, 0]
-    
-        if sample_rate != self.sample_rate and stream.shape[0]>0:
+            stream = stream[:, 0]  # 첫 번째 채널만 사용
+
+        if sample_rate != self.sample_rate and stream.shape[0] > 0:
             logger.info(f'[WARN] audio sample rate is {sample_rate}, resampling into {self.sample_rate}.')
             stream = resampy.resample(x=stream, sr_orig=sample_rate, sr_new=self.sample_rate)
 
         return stream
 
+    # TTS 및 ASR의 입력 큐 초기화
     def flush_talk(self):
         self.tts.flush_talk()
         self.asr.flush_talk()
 
-    def is_speaking(self)->bool:
+    # 현재 TTS가 말하고 있는지 확인
+    def is_speaking(self) -> bool:
         return self.speaking
-    
+
+    # 사용자 정의 이미지/오디오 로딩 (예: 특정 이벤트 발생 시 사용할 음성/영상)
     def __loadcustom(self):
         for item in self.opt.customopt:
             logger.info(item)
+            # 이미지 파일 리스트 로드 (숫자 순 정렬)
             input_img_list = glob.glob(os.path.join(item['imgpath'], '*.[jpJP][pnPN]*[gG]'))
             input_img_list = sorted(input_img_list, key=lambda x: int(os.path.splitext(os.path.basename(x))[0]))
             self.custom_img_cycle[item['audiotype']] = read_imgs(input_img_list)
+
+            # 오디오 파일 로드
             self.custom_audio_cycle[item['audiotype']], sample_rate = sf.read(item['audiopath'], dtype='float32')
             self.custom_audio_index[item['audiotype']] = 0
             self.custom_index[item['audiotype']] = 0
             self.custom_opt[item['audiotype']] = item
 
+    # 사용자 정의 음성/이미지 인덱스를 초기화
     def init_customindex(self):
-        self.curr_state=0
+        self.curr_state = 0
         for key in self.custom_audio_index:
-            self.custom_audio_index[key]=0
+            self.custom_audio_index[key] = 0
         for key in self.custom_index:
-            self.custom_index[key]=0
+            self.custom_index[key] = 0
 
-    def notify(self,eventpoint):
-        logger.info("notify:%s",eventpoint)
+    # 외부 이벤트 알림 로그
+    def notify(self, eventpoint):
+        logger.info("notify:%s", eventpoint)
+
 
     def start_recording(self):
-        """开始录制视频"""
+        """비디오 녹화 시작"""
+        '''
+        실시간 인코딩 가능 → 녹화 중단 시점까지 진행된 데이터는 이미 저장됨
+
+        메모리 효율적 → 대용량 오디오/영상 전체를 RAM에 들고 있을 필요 없음
+
+        스레드/비동기 방식으로 병렬 처리 가능 → 실시간 TTS나 렌더링과 함께 진행 가능
+        '''
         if self.recording:
             return
 
@@ -233,7 +250,7 @@ class BaseReal:
     #     print('record thread stop')
 		
     def stop_recording(self):
-        """停止录制视频"""
+        """녹화 중지지"""
         if not self.recording:
             return
         self.recording = False 
@@ -259,7 +276,7 @@ class BaseReal:
         stream = self.custom_audio_cycle[audiotype][idx:idx+self.chunk]
         self.custom_audio_index[audiotype] += self.chunk
         if self.custom_audio_index[audiotype]>=self.custom_audio_cycle[audiotype].shape[0]:
-            self.curr_state = 1  #当前视频不循环播放，切换到静音状态
+            self.curr_state = 1  # 이 오디오는 끝났으니 상태를 ‘정지’로 바꾸자
         return stream
     
     def set_curr_state(self,audiotype, reinit):

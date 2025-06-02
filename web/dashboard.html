@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>livetalking数字人交互平台</title>
+    <title>라이브 토킹 디지털 휴먼 플랫폼</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
@@ -281,18 +281,18 @@
     <div class="dashboard-container">
         <div class="row">
             <div class="col-12">
-                <h1 class="text-center mb-4">livetalking数字人交互平台</h1>
+                <h1 class="text-center mb-4">라이브 토킹 디지털 휴먼 상호작용 플랫폼</h1>
             </div>
         </div>
 
         <div class="row">
-            <!-- 视频区域 -->
+            <!-- 영상영역 -->
             <div class="col-lg-8">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div>
                             <span class="status-indicator status-disconnected" id="connection-status"></span>
-                            <span id="status-text">未连接</span>
+                            <span id="status-text">연결 안 됨</span>
                         </div>
                     </div>
                     <div class="card-body p-0">
@@ -300,7 +300,7 @@
                             <video id="video" autoplay playsinline></video>
                             <div class="recording-indicator" id="recording-indicator">
                                 <div class="blink"></div>
-                                <span>录制中</span>
+                                <span>녹음 중</span>
                             </div>
                         </div>
                         
@@ -308,19 +308,19 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <button class="btn btn-primary w-100" id="start">
-                                        <i class="bi bi-play-fill"></i> 开始连接
+                                        <i class="bi bi-play-fill"></i> 연결 시작
                                     </button>
                                     <button class="btn btn-danger w-100" id="stop" style="display: none;">
-                                        <i class="bi bi-stop-fill"></i> 停止连接
+                                        <i class="bi bi-stop-fill"></i> 연결 중단
                                     </button>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <div class="d-flex">
                                         <button class="btn btn-outline-primary flex-grow-1 me-2" id="btn_start_record">
-                                            <i class="bi bi-record-fill"></i> 开始录制
+                                            <i class="bi bi-record-fill"></i> 녹음 시작
                                         </button>
                                         <button class="btn btn-outline-danger flex-grow-1" id="btn_stop_record" disabled>
-                                            <i class="bi bi-stop-fill"></i> 停止录制
+                                            <i class="bi bi-stop-fill"></i> 녹음 중단
                                         </button>
                                     </div>
                                 </div>
@@ -329,7 +329,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="video-size-control">
-                                        <label for="video-size-slider" class="form-label">视频大小调节: <span id="video-size-value">100%</span></label>
+                                        <label for="video-size-slider" class="form-label">영상 크기 조절: <span id="video-size-value">100%</span></label>
                                         <input type="range" class="form-range" id="video-size-slider" min="50" max="150" value="100">
                                     </div>
                                 </div>
@@ -340,7 +340,7 @@
                                     <div class="col-md-12">
                                         <div class="form-check form-switch mb-3">
                                             <input class="form-check-input" type="checkbox" id="use-stun">
-                                            <label class="form-check-label" for="use-stun">使用STUN服务器</label>
+                                            <label class="form-check-label" for="use-stun">STUN 서버 사용용</label>
                                         </div>
                                     </div>
                                 </div>
@@ -350,54 +350,55 @@
                 </div>
             </div>
 
-            <!-- 右侧交互 -->
+            <!-- 오른쪽 상호작용 -->
             <div class="col-lg-4">
                 <div class="card">
                     <div class="card-header">
                         <ul class="nav nav-tabs card-header-tabs" id="interaction-tabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="chat-tab" data-bs-toggle="tab" data-bs-target="#chat" type="button" role="tab" aria-controls="chat" aria-selected="true">对话模式</button>
+                                <button class="nav-link active" id="chat-tab" data-bs-toggle="tab" data-bs-target="#chat" type="button" role="tab" aria-controls="chat" aria-selected="true">대화 모드</button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="tts-tab" data-bs-toggle="tab" data-bs-target="#tts" type="button" role="tab" aria-controls="tts" aria-selected="false">朗读模式</button>
+                                <button class="nav-link" id="tts-tab" data-bs-toggle="tab" data-bs-target="#tts" type="button" role="tab" aria-controls="tts" aria-selected="false">낭독 모드</button>
                             </li>
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content" id="interaction-tabs-content">
-                            <!-- 对话模式 -->
+                            <!--  대화 모드 -->
                             <div class="tab-pane fade show active" id="chat" role="tabpanel" aria-labelledby="chat-tab">
                                 <div class="asr-container mb-3" id="chat-messages">
                                     <div class="asr-text system-message">
-                                        系统: 欢迎使用livetalking，请点击"开始连接"按钮开始对话。
+                                        시스템: 라이브 토킹에 오신 것을 환영합니다. "연결 시작" 버튼을 눌러 대화를 시작하세요.
+
                                     </div>
                                 </div>
                                 
                                 <form id="chat-form">
                                     <div class="input-group mb-3">
-                                        <textarea class="form-control" id="chat-message" rows="3" placeholder="输入您想对数字人说的话..."></textarea>
+                                        <textarea class="form-control" id="chat-message" rows="3" placeholder="디지털 휴먼에게 하고 싶은 말을 입력하세요."></textarea>
                                         <button class="btn btn-primary" type="submit">
-                                            <i class="bi bi-send"></i> 发送
+                                            <i class="bi bi-send"></i> 보내기
                                         </button>
                                     </div>
                                 </form>
                                 
-                                <!-- 按住说话按钮 -->
+                                <!-- 누르고 말하기 버튼 -->
                                 <div class="voice-record-btn" id="voice-record-btn">
                                     <i class="bi bi-mic-fill"></i>
                                 </div>
-                                <div class="voice-record-label">按住说话，松开发送</div>
+                                <div class="voice-record-label">누르고 말하기, 놓으면 보내기</div>
                             </div>
                             
-                            <!-- 朗读模式 -->
+                            <!-- 낭독 모드 -->
                             <div class="tab-pane fade" id="tts" role="tabpanel" aria-labelledby="tts-tab">
                                 <form id="echo-form">
                                     <div class="mb-3">
-                                        <label for="message" class="form-label">输入要朗读的文本</label>
-                                        <textarea class="form-control" id="message" rows="6" placeholder="输入您想让数字人朗读的文字..."></textarea>
+                                        <label for="message" class="form-label">읽을 텍스트 입력</label>
+                                        <textarea class="form-control" id="message" rows="6" placeholder="디지털 휴먼에게 읽어주길 원하는 텍스트를 입력하세요."></textarea>
                                     </div>
                                     <button type="submit" class="btn btn-primary w-100">
-                                        <i class="bi bi-volume-up"></i> 朗读文本
+                                        <i class="bi bi-volume-up"></i> 텍스트 읽어주기
                                     </button>
                                 </form>
                             </div>
@@ -412,7 +413,7 @@
         </div>
     </div>
 
-    <!-- 隐藏的会话ID -->
+    <!-- 숨겨진 세션 ID -->
     <input type="hidden" id="sessionid" value="0">
 
 
@@ -436,25 +437,25 @@
                 switch(status) {
                     case 'connected':
                         statusIndicator.addClass('status-connected');
-                        statusText.text('已连接');
+                        statusText.text('연결됨');
                         break;
                     case 'connecting':
                         statusIndicator.addClass('status-connecting');
-                        statusText.text('连接中...');
+                        statusText.text('연결중');
                         break;
                     case 'disconnected':
                     default:
                         statusIndicator.addClass('status-disconnected');
-                        statusText.text('未连接');
+                        statusText.text('연결 안됨');
                         break;
                 }
             }
 
-            // 添加聊天消息
+            // 채팅 메시지 추가
             function addChatMessage(message, type = 'user') {
                 const messagesContainer = $('#chat-messages');
                 const messageClass = type === 'user' ? 'user-message' : 'system-message';
-                const sender = type === 'user' ? '您' : '数字人';
+                const sender = type === 'user' ? '귀하' : '디지털 휴먼';
                 
                 const messageElement = $(`
                     <div class="asr-text ${messageClass}">
@@ -466,24 +467,24 @@
                 messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
             }
 
-            // 开始/停止按钮
+            // 시작/중지 버튼
             $('#start').click(function() {
                 updateConnectionStatus('connecting');
                 start();
                 $(this).hide();
                 $('#stop').show();
                 
-                // 添加定时器检查视频流是否已加载
+                // 타이머를 추가하여 영상 스트림이 로딩되었는지 확인
                 let connectionCheckTimer = setInterval(function() {
                     const video = document.getElementById('video');
-                    // 检查视频是否有数据
+                    // 비디오에 데이터가 있는지 확인
                     if (video.readyState >= 3 && video.videoWidth > 0) {
                         updateConnectionStatus('connected');
                         clearInterval(connectionCheckTimer);
                     }
-                }, 2000); // 每2秒检查一次
+                }, 2000); // 2초마다 한 번씩 확인
                 
-                // 60秒后如果还是连接中状态，就停止检查
+                // 60초 후에도 여전히 연결 중이면 검사 중지
                 setTimeout(function() {
                     if (connectionCheckTimer) {
                         clearInterval(connectionCheckTimer);
@@ -498,7 +499,7 @@
                 updateConnectionStatus('disconnected');
             });
 
-            // 录制功能
+            // 녹음기능
             $('#btn_start_record').click(function() {
                 console.log('Starting recording...');
                 fetch('/record', {
@@ -570,10 +571,10 @@
                 });
                 
                 $('#message').val('');
-                addChatMessage(`已发送朗读请求: "${message}"`, 'system');
+                addChatMessage(`읽어주기 요청을 보냈습니다.: "${message}"`, 'system');
             });
 
-            // 聊天模式表单提交
+            // 채팅 모드 폼 제출
             $('#chat-form').on('submit', function(e) {
                 e.preventDefault();
                 var message = $('#chat-message').val();
@@ -598,13 +599,13 @@
                 $('#chat-message').val('');
             });
 
-            // 按住说话功能
+            // 누르고 말하기 기능
             let mediaRecorder;
             let audioChunks = [];
             let isRecording = false;
             let recognition;
             
-            // 检查浏览器是否支持语音识别
+            // 브라우저가 음성 인식을 지원하는지 확인
             const isSpeechRecognitionSupported = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
             
             if (isSpeechRecognitionSupported) {
@@ -632,11 +633,11 @@
                 };
                 
                 recognition.onerror = function(event) {
-                    console.error('语音识别错误:', event.error);
+                    console.error('음성 인식 오류:', event.error);
                 };
             }
             
-            // 按住说话按钮事件
+            // 누르고 말하기 버튼 이벤트
             $('#voice-record-btn').on('mousedown touchstart', function(e) {
                 e.preventDefault();
                 startRecording();
@@ -646,7 +647,7 @@
                 }
             });
             
-            // 开始录音
+            // 녹음 시작
             function startRecording() {
                 if (isRecording) return;
                 
@@ -672,8 +673,8 @@
                         }
                     })
                     .catch(function(error) {
-                        console.error('无法访问麦克风:', error);
-                        alert('无法访问麦克风，请检查浏览器权限设置。');
+                        console.error('마이크에 접근할 수 없음:', error);
+                        alert('마이크에 접근할 수 없습니다. 브라우저 권한 설정을 확인해주세요.');
                     });
             }
 
@@ -683,23 +684,23 @@
                 mediaRecorder.stop();
                 isRecording = false;
                 
-                // 停止所有音轨
+                // 모든 오디오 트랙 중지
                 mediaRecorder.stream.getTracks().forEach(track => track.stop());
                 
-                // 视觉反馈恢复
+                // 시각 피드백 복원
                 $('#voice-record-btn').removeClass('recording-pulse');
                 $('#voice-record-btn').css('background-color', '');
                 
-                // 停止语音识别
+                // 음성 인식 중지
                 if (recognition) {
                     recognition.stop();
                 }
                 
-                // 获取识别的文本并发送
+                //  인식된 텍스트를 가져와서 전송
                 setTimeout(function() {
                     const recognizedText = $('#chat-message').val().trim();
                     if (recognizedText) {
-                        // 发送识别的文本
+                        // 인식된 텍스트 전송
                         fetch('/human', {
                             body: JSON.stringify({
                                 text: recognizedText,
@@ -719,7 +720,7 @@
                 }, 500); 
             }
 
-            // WebRTC 相关功能
+            // WebRTC 관련 기능
             if (typeof window.onWebRTCConnected === 'function') {
                 const originalOnConnected = window.onWebRTCConnected;
                 window.onWebRTCConnected = function() {
@@ -732,7 +733,7 @@
                 };
             }
 
-            // 当连接断开时更新状态
+            // 연결이 끊어졌을 때 상태 업데이트
             if (typeof window.onWebRTCDisconnected === 'function') {
                 const originalOnDisconnected = window.onWebRTCDisconnected;
                 window.onWebRTCDisconnected = function() {
@@ -745,11 +746,11 @@
                 };
             }
 
-            // SRS WebRTC播放功能
-            var sdk = null; // 全局处理器，用于在重新发布时进行清理
+            // SRS WebRTC 재생 기능
+            var sdk = null; // 재게시 시 정리 작업을 위한 전역 처리기
 
             function startPlay() {
-                // 关闭之前的连接
+                // 이전 연결 닫기
                 if (sdk) {
                     sdk.close();
                 }
@@ -761,10 +762,10 @@
                 var url = "http://" + host + ":1985/rtc/v1/whep/?app=live&stream=livestream";
                 
                 sdk.play(url).then(function(session) {
-                    console.log('WebRTC播放已启动，会话ID:', session.sessionid);
+                    console.log('WebRTC 재생이 시작되었습니다. 세션 ID:', session.sessionid);
                 }).catch(function(reason) {
                     sdk.close();
-                    console.error('WebRTC播放失败:', reason);
+                    console.error('WebRTC 재생 실패:', reason);
                 });
             }
         });
