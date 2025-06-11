@@ -70,7 +70,7 @@ class LocalTTS(BaseTTS):
 ---
 
 ## 🤖 LLM 연동 방식
-* Polyglot-Ko 모델 로컬 실행: `uvicorn app:app --host 0.0.0.0 --port 8888`
+* Polyglot-Ko 모델 로컬 실행: `uvicorn app:app --host 0.0.0.0 --port 8888` (LLM을 8888 port에서 띄워야 함)
 * WebRTC 시스템은 내부적으로 해당 LLM을 호출하여 응답 생성을 처리합니다.
 
 ---
