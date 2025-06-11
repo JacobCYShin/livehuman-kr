@@ -1,4 +1,3 @@
-# 파일명: quick_train.py
 '''
 import torch
 

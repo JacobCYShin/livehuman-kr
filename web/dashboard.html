@@ -8,15 +8,16 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --accent-color: #4895ef;
-            --background-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --text-color: #212529;
+            --primary-color: #008485;         /* 하나그린 */
+            --secondary-color: #005B5C;       /* 진한 녹청색 */
+            --accent-color: #00B2A9;          /* 민트 계열 보조색 */
+            --background-color: #f0fdfb;      /* 연한 민트 배경 */
+            --card-bg: #ffffff;               /* 카드 배경은 유지 */
+            --text-color: #212529;            /* 본문 텍스트 유지 */
             --border-radius: 10px;
-            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);  /* 살짝 더 부드러운 그림자 */
         }
+
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -281,7 +282,10 @@
     <div class="dashboard-container">
         <div class="row">
             <div class="col-12">
-                <h1 class="text-center mb-4">라이브 토킹 디지털 휴먼 상호작용 플랫폼</h1>
+                <h1 class="text-center mb-4">
+                    <img src="hana_logo.png" alt="하나금융그룹 로고" style="height: 60px; vertical-align: middle; margin-right: 8px;">
+                    하나금융그룹 AI 은행원
+                </h1>
             </div>
         </div>
 
@@ -455,7 +459,7 @@
             function addChatMessage(message, type = 'user') {
                 const messagesContainer = $('#chat-messages');
                 const messageClass = type === 'user' ? 'user-message' : 'system-message';
-                const sender = type === 'user' ? '귀하' : '디지털 휴먼';
+                const sender = type === 'user' ? '고객' : 'AI 은행원';
                 
                 const messageElement = $(`
                     <div class="asr-text ${messageClass}">
@@ -612,7 +616,7 @@
                 recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
                 recognition.continuous = true;
                 recognition.interimResults = true;
-                recognition.lang = 'zh-CN';
+                recognition.lang = 'ko-KR';
                 
                 recognition.onresult = function(event) {
                     let interimTranscript = '';

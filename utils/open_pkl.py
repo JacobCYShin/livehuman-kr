@@ -2,6 +2,7 @@ import pickle
 
 # 파일 경로
 path = './data/avatars/wav2lip256_avatar1/coords.pkl'
+# path = './data/avatars/wav2lip512_taeri/0512.pkl'
 
 # .pkl 파일 열기
 with open(path, 'rb') as f:
