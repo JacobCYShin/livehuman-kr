@@ -1,11 +1,11 @@
-# 🎤 실시간 AI 립싱크 스트리밍 (한국어 버전)
+# 실시간 AI 립싱크 스트리밍 (한국어 버전)
 
 본 프로젝트는 원작자의 WebRTC 기반 디지털 휴먼 스트리밍 시스템을 한국어 환경에 맞게 최적화한 버전입니다.
 `app.py`를 실행하면 **한국어 음성 입력에 최적화된 립싱크 디지털 휴먼 스트리밍**을 직접 테스트할 수 있습니다.
 
 ---
 
-## ⚡ 빠른 실행 가이드 (Quickstart)
+## 빠른 실행 가이드 (Quickstart)
 
 ```bash
 conda activate nerfstream
@@ -25,7 +25,7 @@ python app.py --transport webrtc --model wav2lip --avatar_id wav2lip_taeri
 
 ---
 
-## 🧑‍🎤 현재 사용 중인 모델 구성
+## 현재 사용 중인 모델 구성
 
 | 항목       | 설명                                                     |
 | -------- | ------------------------------------------------------ |
@@ -45,7 +45,7 @@ from .wav2lip_v3 import Wav2Lip, Wav2Lip_disc_qual  # 512 모델 사용 시
 
 ---
 
-## 🔊 TTS 사용 방식
+## TTS 사용 방식
 
 로컬에서 실행 중인 TTS 서버(ESPnet 기반)를 다음과 같이 호출합니다:
 
@@ -65,11 +65,13 @@ class LocalTTS(BaseTTS):
         res = requests.post("http://localhost:7009/api/tts", json=payload)
 ```
 
+* TTS 서버 github repo : https://github.com/JacobCYShin/ESPnet-server-kr
 * TTS 서버 실행 명령: `uvicorn app.main:app --host 0.0.0.0 --port 7009`
 
 ---
 
-## 🤖 LLM 연동 방식
+## LLM 연동 방식
+* LLM 서버 github repo : https://github.com/JacobCYShin/polyglot-1.3b-kr
 * Polyglot-Ko 모델 로컬 실행: `uvicorn app:app --host 0.0.0.0 --port 8888` (LLM을 8888 port에서 띄워야 함)
 * WebRTC 시스템은 내부적으로 해당 LLM을 호출하여 응답 생성을 처리합니다.
 
@@ -83,7 +85,7 @@ class LocalTTS(BaseTTS):
 * [ ] **입술 마스킹 정밀화**: 얼굴 전체 대신 입술 영역만 합성하도록 모델 입출력 수정
 ---
 
-## 📂 디렉토리 구조 (일부)
+## 디렉토리 구조 (일부)
 
 ```
 ├── app.py                  # 실행 진입점
@@ -104,7 +106,7 @@ class LocalTTS(BaseTTS):
 
 ---
 
-## 🧾 coords.pkl (얼굴 합성 좌표) 생성 방법
+## coords.pkl (얼굴 합성 좌표) 생성 방법
 
 디지털 아바타의 얼굴 합성 좌표는 `.npy` → `.pkl`로 변환해야 하며, 구조는 다음과 같습니다:
 
@@ -112,7 +114,7 @@ class LocalTTS(BaseTTS):
 * 순서: `(y1, y2, x1, x2)`
 
 
-## 🧩 시스템 구성도
+## 시스템 구성도
 
 ```
                         ┌────────────────────┐
@@ -169,14 +171,15 @@ class LocalTTS(BaseTTS):
 
 ---
 
-## 📦 주요 특징
+## 주요 특징
 
 * **한국어 TTS/ASR 지원 (모든 주요 스크립트에 한글 주석 포함)**
 * **실시간 WebRTC 기반 스트리밍**
 * MuseTalk, Wav2Lip, Ultralight 디지털 휴먼 모델 호환
 * 타이핑한 한국어 텍스트 → 음성 → 립싱크 비디오 출력
 * 브라우저 기반 대화형 UI 지원
-## 🙏 원작자에게 감사의 말씀
+
+## 원작자에게 감사의 말씀
 
 본 코드는 [원작 GitHub 리포지토리](https://https://github.com/lipku/LiveTalking)를 기반으로, 한국어 환경 및 TTS/LLM 연동 최적화를 수행한 포크 버전입니다. 원작자의 노력에 깊이 감사드립니다.
 
