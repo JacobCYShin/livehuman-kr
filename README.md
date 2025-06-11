@@ -5,6 +5,8 @@
 
 ---
 
+* livehuman-kr에 필요한 model/data는 개인적으로 요청해주세요!
+
 ## 빠른 실행 가이드 (Quickstart)
 
 ```bash
